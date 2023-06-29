@@ -1,5 +1,6 @@
 const libraryEl = document.querySelector("#library");
 let library = [];
+const bookCountEl = document.querySelector("#books");
 
 // Book Constructor
 function Book(title,author,published,pages,status){
@@ -39,4 +40,7 @@ function showLibrary(){
 addBook(new Book("John's Adventure","Jane Wayne",1995,200,false));
 addBook(new Book("Jane's Adventure","John Wayne",1990,500,true));
 addBook(new Book("Become A Millionare","Chuck Norris",2021,1000,true));
+addBook(new Book("Romeo and Juliet","Shakespear",1985,1500,false));
+addBook(new Book("Finish What You Start","John Lewis",2021,200,true));
 showLibrary();
+bookCountEl.textContent = library.length;
