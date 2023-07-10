@@ -3,7 +3,14 @@ const libraryDivEl = document.querySelector("#library-div");
 const formEl = document.querySelector("#book-form");
 const newBookBtn = document.querySelector("#add-new");
 const closeEl = document.querySelector("#close");
-const statusEl = document.querySelector("#status");
+
+// Form
+const titleInput = document.querySelector("#title");
+const authorInput = document.querySelector("#author");
+const publishedInput = document.querySelector("#published");
+const pagesInput = document.querySelector("#pages");
+const radioBtns = document.getElementsByName("status");
+const createBtn = document.querySelector("#create");
 
 let library = [];
 const bookCountEl = document.querySelector("#books");
@@ -17,9 +24,29 @@ function Book(title,author,published,pages,status){
     this.status = status;
 }
 
+//* Functions
+
 // Adding books to library array
-function addBook(book){
-    library.push(book);
+function addBook(){
+    const status = document.querySelector('input[name="status"]:checked').value;
+    const newBook = new Book(titleInput.value,authorInput.value,publishedInput.value,pagesInput.value,status === "Reading" ? false : true);
+    if(!titleInput.value && !authorInput.value && !publishedInput.value && !pagesInput.value && !status){
+        alert("Oops. Looks like your missing some information!");
+    }else{
+        library.push(newBook);
+        titleInput.value = "";
+        authorInput.value = "";
+        publishedInput.value = "";
+        pagesInput.value = "";
+        formEl.classList.toggle("hidden");
+        radioBtns.forEach((radio) => {
+            radio.checked = false;
+        });
+        libraryDivEl.classList.toggle("hidden");
+        bookCard(newBook);
+        bookCountEl.textContent = library.length;
+    }
+    event.preventDefault();
 }
 
 // Making book card
@@ -31,7 +58,7 @@ function bookCard(book){
             <h3 class="text-xl font-bold">Author: <span class="text-lg font-semibold">${book.author}</span></h3>
             <h3 class="text-xl font-bold">Published: <span class="text-lg font-semibold">${book.published}</span></h3>
             <h3 class="text-xl font-bold">Pages: <span class="text-lg font-semibold">${book.pages}</span></h3>
-            <h3 class="text-xl font-bold">Status: <span class="text-lg font-semibold ${book.status === true ? "text-green-500" : "text-yellow-500"}">${book.status === true ? "Read" : "Reading"}</span></h3>
+            <h3 class="text-xl font-bold">Status: <span class="text-lg font-semibold status-text ${book.status === true ? "text-green-500" : "text-yellow-500"}">${book.status === true ? "Read" : "Reading"}</span></h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <button id="delete" class="flex items-center justify-center text-white font-bold py-2 px-3 bg-red-600 rounded transition delay-600 duration-500 hover:bg-red-700 mt-1">Remove
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash ml-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -54,14 +81,38 @@ function bookCard(book){
             </div>
     `
     libraryEl.appendChild(bookCardEl);
+    // Update Reading Status
+    const statusBtn = document.querySelector("#status");
+    // Update Status
+    statusBtn.addEventListener("click",() => {
+        if(statusBtn.classList.contains("bg-green-600")){
+            statusBtn.classList.remove("bg-green-600","hover:bg-green-700");
+            statusBtn.classList.add("bg-yellow-500","hover:bg-yellow-600");
+        }else{
+            statusBtn.classList.remove("bg-yellow-500","hover:bg-yellow-600");
+            statusBtn.classList.add("bg-green-600","hover:bg-green-700");
+        }
+        book.status = !book.status;
+        const statusText = bookCardEl.querySelector(".status-text");
+        statusText.textContent = book.status ? "Read" : "Reading";
+        if(statusText.classList.contains("text-green-500")){
+            statusText.classList.remove("text-green-500");
+            statusText.classList.add("text-yellow-500");
+        }else{
+            statusText.classList.remove("text-yellow-500");
+            statusText.classList.add("text-green-500");
+        }
+    });
 }
 
-// Showing book cards
+// Show book cards
 function showLibrary(){
     library.forEach(book => {
         bookCard(book);
     })
 }
+
+//* Event Listeners
 
 // Showing New Book Form
 newBookBtn.addEventListener("click", () => {
@@ -76,15 +127,8 @@ closeEl.addEventListener("click", () => {
     formEl.classList.toggle("hidden");
 })
 
+// Form Create Book 
+createBtn.addEventListener("click", addBook);
 
-addBook(new Book("John's Adventure","Jane Wayne",1995,200,false));
-addBook(new Book("Jane's Adventure","John Wayne",1990,500,true));
-addBook(new Book("Become A Millionare","Chuck Norris",2021,1000,true));
-addBook(new Book("Romeo and Juliet","Shakespear",1985,1500,false));
-addBook(new Book("Finish What You Start","John Lewis",2021,200,true));
+// Invoking books objects to display in Cards
 showLibrary();
-bookCountEl.textContent = library.length;
-
-// statusEl.addEventListener("click", (book) => {
-//     book.status === true ? book.status = false : book.status = true;
-// });
