@@ -14,6 +14,7 @@ const createBtn = document.querySelector("#create");
 
 let library = [];
 const bookCountEl = document.querySelector("#books");
+let dataAtt = 0;
 
 // Book Constructor
 function Book(title,author,published,pages,status){
@@ -80,10 +81,11 @@ function bookCard(book){
                 </button>
             </div>
     `
+    bookCardEl.dataset.item = dataAtt++;
     libraryEl.appendChild(bookCardEl);
+
     // Update Reading Status
     const statusBtn = document.querySelector("#status");
-    // Update Status
     statusBtn.addEventListener("click",() => {
         if(statusBtn.classList.contains("bg-green-600")){
             statusBtn.classList.remove("bg-green-600","hover:bg-green-700");
@@ -101,6 +103,18 @@ function bookCard(book){
         }else{
             statusText.classList.remove("text-yellow-500");
             statusText.classList.add("text-green-500");
+        }
+    });
+
+    // Delete Book
+    const deleteBtn = document.querySelector("#delete");
+    deleteBtn.addEventListener("click", () => {
+        const index = library.indexOf(book);
+        if(index === parseInt(bookCardEl.dataset.item)){
+            library.splice(index,1);
+            bookCardEl.remove();
+            parseInt(bookCardEl.dataset.item) - 1;
+            bookCountEl.textContent = library.length;
         }
     });
 }
