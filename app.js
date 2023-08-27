@@ -61,7 +61,7 @@ function bookCard(book){
             <h3 class="text-xl font-bold">Pages: <span class="text-lg font-semibold">${book.pages}</span></h3>
             <h3 class="text-xl font-bold">Status: <span class="text-lg font-semibold status-text ${book.status === true ? "text-green-500" : "text-yellow-500"}">${book.status === true ? "Read" : "Reading"}</span></h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <button id="delete" class="flex items-center justify-center text-white font-bold py-2 px-3 bg-red-600 rounded transition delay-600 duration-500 hover:bg-red-700 mt-1">Remove
+                <button class="delete flex items-center justify-center text-white font-bold py-2 px-3 bg-red-600 rounded transition delay-600 duration-500 hover:bg-red-700 mt-1">Remove
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash ml-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                     <path d="M4 7l16 0"></path>
@@ -71,7 +71,7 @@ function bookCard(book){
                     <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                     </svg>
                 </button>
-                <button id="status" class="flex items-center justify-center text-white font-bold py-2 px-3 ${book.status === true ? "bg-green-600 hover:bg-green-700" : "bg-yellow-500 hover:bg-yellow-600"} rounded transition delay-600 duration-500 mt-1">Change Status
+                <button class="status flex items-center justify-center text-white font-bold py-2 px-3 ${book.status === true ? "bg-green-600 hover:bg-green-700" : "bg-yellow-500 hover:bg-yellow-600"} rounded transition delay-600 duration-500 mt-1">Change Status
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-book-2 ml-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                     <path d="M19 4v16h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12z"></path>
@@ -85,38 +85,43 @@ function bookCard(book){
     libraryEl.appendChild(bookCardEl);
 
     // Update Reading Status
-    const statusBtn = document.querySelector("#status");
-    statusBtn.addEventListener("click",() => {
-        if(statusBtn.classList.contains("bg-green-600")){
-            statusBtn.classList.remove("bg-green-600","hover:bg-green-700");
-            statusBtn.classList.add("bg-yellow-500","hover:bg-yellow-600");
-        }else{
-            statusBtn.classList.remove("bg-yellow-500","hover:bg-yellow-600");
-            statusBtn.classList.add("bg-green-600","hover:bg-green-700");
-        }
-        book.status = !book.status;
-        const statusText = bookCardEl.querySelector(".status-text");
-        statusText.textContent = book.status ? "Read" : "Reading";
-        if(statusText.classList.contains("text-green-500")){
-            statusText.classList.remove("text-green-500");
-            statusText.classList.add("text-yellow-500");
-        }else{
-            statusText.classList.remove("text-yellow-500");
-            statusText.classList.add("text-green-500");
-        }
-    });
+    const statusBtns = document.querySelectorAll(".status");
+    statusBtns.forEach(statusBtn => {
+        statusBtn.addEventListener("click",() => {
+            if(statusBtn.classList.contains("bg-green-600")){
+                statusBtn.classList.remove("bg-green-600","hover:bg-green-700");
+                statusBtn.classList.add("bg-yellow-500","hover:bg-yellow-600");
+            }else{
+                statusBtn.classList.remove("bg-yellow-500","hover:bg-yellow-600");
+                statusBtn.classList.add("bg-green-600","hover:bg-green-700");
+            }
+            book.status = !book.status;
+            const statusTexts = bookCardEl.querySelectorAll(".status-text");
+            statusTexts.forEach(statusText => {
+                statusText.textContent = book.status ? "Read" : "Reading";
+                if(statusText.classList.contains("text-green-500")){
+                    statusText.classList.remove("text-green-500");
+                    statusText.classList.add("text-yellow-500");
+                }else{
+                    statusText.classList.remove("text-yellow-500");
+                    statusText.classList.add("text-green-500");
+                }
+            })
+        });
+    })
 
     // Delete Book
-    const deleteBtn = document.querySelector("#delete");
-    deleteBtn.addEventListener("click", () => {
-        const index = library.indexOf(book);
-        if(index === parseInt(bookCardEl.dataset.item)){
-            library.splice(index,1);
-            bookCardEl.remove();
-            parseInt(bookCardEl.dataset.item) - 1;
-            bookCountEl.textContent = library.length;
-        }
-    });
+    const deleteBtns = document.querySelectorAll(".delete");
+    deleteBtns.forEach(deleteBtn => {
+        deleteBtn.addEventListener("click", () => {
+            const index = library.indexOf(book);
+            if(index === parseInt(bookCardEl.dataset.item)){
+                library.splice(index,1);
+                bookCardEl.remove();
+                bookCountEl.textContent = library.length;
+            }
+        });
+    })
 }
 
 // Show book cards
