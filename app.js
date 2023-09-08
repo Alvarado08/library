@@ -14,7 +14,7 @@ const createBtn = document.querySelector("#create");
 
 let library = [];
 const bookCountEl = document.querySelector("#books");
-let dataAtt = 0;
+let dataAtt;
 
 // Book Constructor
 function Book(title,author,published,pages,status){
@@ -34,6 +34,7 @@ function addBook(){
     if(!titleInput.value && !authorInput.value && !publishedInput.value && !pagesInput.value && !status){
         alert("Oops. Looks like your missing some information!");
     }else{
+        library.length === 0 ? dataAtt = 0 : dataAtt = library.length;
         library.push(newBook);
         titleInput.value = "";
         authorInput.value = "";
@@ -81,7 +82,7 @@ function bookCard(book){
                 </button>
             </div>
     `
-    bookCardEl.dataset.item = dataAtt++;
+    bookCardEl.dataset.item = dataAtt;
     libraryEl.appendChild(bookCardEl);
 
     // Update Reading Status
@@ -113,15 +114,45 @@ function bookCard(book){
     // Delete Book
     const deleteBtns = document.querySelectorAll(".delete");
     deleteBtns.forEach(deleteBtn => {
-        deleteBtn.addEventListener("click", () => {
-            const index = library.indexOf(book);
-            if(index === parseInt(bookCardEl.dataset.item)){
-                library.splice(index,1);
-                bookCardEl.remove();
+        deleteBtn.addEventListener("click", btnClick => {
+            const clickedDeleteBtn = btnClick.currentTarget;
+            const bookCardElement = clickedDeleteBtn.closest(".bg-white");
+
+            if(bookCardElement){
+                const index = parseInt(bookCardElement.dataset.item);
+                if (index >= 0 && index < library.length) {
+                // Remove the book card from the DOM
+                bookCardElement.remove();
+                // Remove the book from the library array
+                library.splice(index, 1);
+                // Update the book count
                 bookCountEl.textContent = library.length;
+                // Update data-item attributes
+                updateDataItem();
             }
-        });
+            }
+        })
     })
+    // const deleteBtns = document.querySelectorAll(".delete");
+    // deleteBtns.forEach(deleteBtn => {
+    //     deleteBtn.addEventListener("click", () => {
+    //         const index = library.indexOf(bookCardEl);
+    //         if(index === parseInt(bookCardEl.dataset.item)){
+    //             bookCardEl.remove();
+    //             updateDataItem();
+    //             library.splice(index,1);
+    //             bookCountEl.textContent = library.length;
+    //         }
+    //     });
+    // })
+
+    // Iterate and update data-item book elements 
+    function updateDataItem(){
+        const bookCardElements = document.querySelectorAll(".bg-white");
+        bookCardElements.forEach((bookCard, newIndex) => {
+            bookCard.dataset.item = newIndex;
+        })
+    }
 }
 
 // Show book cards
