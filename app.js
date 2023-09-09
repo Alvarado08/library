@@ -86,40 +86,53 @@ function bookCard(book){
     libraryEl.appendChild(bookCardEl);
 
     // Update Reading Status
-    const statusBtns = document.querySelectorAll(".status");
-    statusBtns.forEach(statusBtn => {
-        statusBtn.addEventListener("click",() => {
-            if(statusBtn.classList.contains("bg-green-600")){
-                statusBtn.classList.remove("bg-green-600","hover:bg-green-700");
-                statusBtn.classList.add("bg-yellow-500","hover:bg-yellow-600");
-            }else{
-                statusBtn.classList.remove("bg-yellow-500","hover:bg-yellow-600");
-                statusBtn.classList.add("bg-green-600","hover:bg-green-700");
-            }
-            book.status = !book.status;
-            const statusTexts = bookCardEl.querySelectorAll(".status-text");
-            statusTexts.forEach(statusText => {
-                statusText.textContent = book.status ? "Read" : "Reading";
-                if(statusText.classList.contains("text-green-500")){
-                    statusText.classList.remove("text-green-500");
-                    statusText.classList.add("text-yellow-500");
-                }else{
-                    statusText.classList.remove("text-yellow-500");
-                    statusText.classList.add("text-green-500");
-                }
-            })
-        });
-    })
+    // const statusBtns = document.querySelectorAll(".status");
+    // statusBtns.forEach(statusBtn => {
+    //     statusBtn.addEventListener("click",() => {
+    //         if(statusBtn.classList.contains("bg-green-600")){
+    //             statusBtn.classList.remove("bg-green-600","hover:bg-green-700");
+    //             statusBtn.classList.add("bg-yellow-500","hover:bg-yellow-600");
+    //         }else{
+    //             statusBtn.classList.remove("bg-yellow-500","hover:bg-yellow-600");
+    //             statusBtn.classList.add("bg-green-600","hover:bg-green-700");
+    //         }
+    //         book.status = !book.status;
+    //         const statusTexts = bookCardEl.querySelectorAll(".status-text");
+    //         statusTexts.forEach(statusText => {
+    //             statusText.textContent = book.status ? "Read" : "Reading";
+    //             if(statusText.classList.contains("text-green-500")){
+    //                 statusText.classList.remove("text-green-500");
+    //                 statusText.classList.add("text-yellow-500");
+    //             }else{
+    //                 statusText.classList.remove("text-yellow-500");
+    //                 statusText.classList.add("text-green-500");
+    //             }
+    //         })
+    //     });
+    // })
 
-    // Delete Book
-    const deleteBtns = document.querySelectorAll(".delete");
-    deleteBtns.forEach(deleteBtn => {
-        deleteBtn.addEventListener("click", btnClick => {
-            const clickedDeleteBtn = btnClick.currentTarget;
-            const bookCardElement = clickedDeleteBtn.closest(".bg-white");
+}
 
-            if(bookCardElement){
-                const index = parseInt(bookCardElement.dataset.item);
+// Update read book status
+function updateStatus(bookCardElement,statusText){
+    if(bookCardElement.classList.contains("bg-green-600") && statusText.classList.contains("text-green-500")){
+        bookCardElement.classList.remove("bg-green-600","hover:bg-green-700");
+        statusText.classList.remove("text-green-500");
+        bookCardElement.classList.add("bg-yellow-500","hover:bg-yellow-600");
+        statusText.classList.add("text-yellow-500");
+        statusText.textContent = "Reading";
+    }else{
+        bookCardElement.classList.remove("bg-yellow-500","hover:bg-yellow-600");
+        statusText.classList.remove("text-yellow-500");
+        bookCardElement.classList.add("bg-green-600","hover:bg-green-700");
+        statusText.classList.add("text-green-500");
+        statusText.textContent = "Read";
+    }
+}
+
+// Delete book
+function deleteBook(bookCardElement){
+    const index = parseInt(bookCardElement.dataset.item);
                 if (index >= 0 && index < library.length) {
                 // Remove the book card from the DOM
                 bookCardElement.remove();
@@ -128,31 +141,16 @@ function bookCard(book){
                 // Update the book count
                 bookCountEl.textContent = library.length;
                 // Update data-item attributes
-                updateDataItem();
+                updateDataItem(bookCardElement);
             }
-            }
-        })
-    })
-    // const deleteBtns = document.querySelectorAll(".delete");
-    // deleteBtns.forEach(deleteBtn => {
-    //     deleteBtn.addEventListener("click", () => {
-    //         const index = library.indexOf(bookCardEl);
-    //         if(index === parseInt(bookCardEl.dataset.item)){
-    //             bookCardEl.remove();
-    //             updateDataItem();
-    //             library.splice(index,1);
-    //             bookCountEl.textContent = library.length;
-    //         }
-    //     });
-    // })
+}
 
-    // Iterate and update data-item book elements 
-    function updateDataItem(){
-        const bookCardElements = document.querySelectorAll(".bg-white");
-        bookCardElements.forEach((bookCard, newIndex) => {
-            bookCard.dataset.item = newIndex;
-        })
-    }
+// Update data-item on book elements
+function updateDataItem(bookCardElement){
+    const bookCardElements = document.querySelectorAll(".bg-white");
+    bookCardElements.forEach((bookCard, newIndex) => {
+        bookCard.dataset.item = newIndex;
+    })
 }
 
 // Show book cards
@@ -179,6 +177,26 @@ closeEl.addEventListener("click", () => {
 
 // Form Create Book 
 createBtn.addEventListener("click", addBook);
+
+// Attach delete button event listeners to the whole document and listen for clicks on delete and update status buttons 
+document.addEventListener("click", event => {
+    const bookCardElement = event.target.closest(".bg-white");
+    const bookStatusBtn = event.target.closest(".status");
+    const statusText = event.target.closest(".status-text");
+
+    if (event.target.classList.contains("delete")) {
+        if (bookCardElement) {
+            deleteBook(bookCardElement);
+        }
+    }
+    if (event.target.classList.contains("status")) {
+        if (bookStatusBtn && statusText) {
+            //updateStatus(bookStatusBtn);
+            updateStatus(bookCardElement, statusText);
+        }
+    }
+
+});
 
 // Invoking books objects to display in Cards
 showLibrary();
