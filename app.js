@@ -47,6 +47,7 @@ function addBook(){
         libraryDivEl.classList.toggle("hidden");
         bookCard(newBook);
         bookCountEl.textContent = library.length;
+        library.length !== 0 && libraryEl.childNodes[1].classList.add("hidden");
     }
     event.preventDefault();
 }
@@ -114,17 +115,22 @@ function bookCard(book){
 }
 
 // Update read book status
-function updateStatus(bookCardElement,statusText){
-    if(bookCardElement.classList.contains("bg-green-600") && statusText.classList.contains("text-green-500")){
-        bookCardElement.classList.remove("bg-green-600","hover:bg-green-700");
+function updateStatus(bookCardElement,btn){
+    const index = parseInt(bookCardElement.dataset.item);
+    let bookObj = library.find((item,i)=>i===index);
+    let statusText = bookCardElement.childNodes[9].children[0];
+    if(bookObj.status === true){
+        btn.classList.add("bg-yellow-500","hover:bg-yellow-600");
+        btn.classList.remove("bg-green-600","hover:bg-green-700");
+        bookObj.status = !bookObj.status;
         statusText.classList.remove("text-green-500");
-        bookCardElement.classList.add("bg-yellow-500","hover:bg-yellow-600");
         statusText.classList.add("text-yellow-500");
         statusText.textContent = "Reading";
     }else{
-        bookCardElement.classList.remove("bg-yellow-500","hover:bg-yellow-600");
+        btn.classList.add("bg-green-600","hover:bg-green-700");
+        btn.classList.remove("bg-yellow-500","hover:bg-yellow-600");
+        bookObj.status = !bookObj.status;
         statusText.classList.remove("text-yellow-500");
-        bookCardElement.classList.add("bg-green-600","hover:bg-green-700");
         statusText.classList.add("text-green-500");
         statusText.textContent = "Read";
     }
@@ -142,6 +148,7 @@ function deleteBook(bookCardElement){
                 bookCountEl.textContent = library.length;
                 // Update data-item attributes
                 updateDataItem(bookCardElement);
+                library.length === 0 && libraryEl.childNodes[1].classList.remove("hidden");
             }
 }
 
@@ -189,10 +196,9 @@ document.addEventListener("click", event => {
             deleteBook(bookCardElement);
         }
     }
-    if (event.target.classList.contains("status")) {
-        if (bookStatusBtn && statusText) {
-            //updateStatus(bookStatusBtn);
-            updateStatus(bookCardElement, statusText);
+    if(event.target.classList.contains("status")){
+        if (bookCardElement) {
+            updateStatus(bookCardElement,bookStatusBtn);
         }
     }
 
@@ -200,3 +206,4 @@ document.addEventListener("click", event => {
 
 // Invoking books objects to display in Cards
 showLibrary();
+bookCountEl.textContent = library.length;

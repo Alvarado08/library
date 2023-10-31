@@ -8,7 +8,7 @@
     <script src="app.js" defer></script>
     <title>Library</title>
 </head>
-<body class="flex flex-col justify-center items-center min-h-screen bg-slate-600 p-5">
+<body class="flex flex-col justify-center items-center min-h-screen bg-slate-600 p-5 relative">
     <h1 class="text-white font-bold text-6xl mb-6">My Library</h1>
     <div id="library-div">
         <div class="flex items-center justify-start mb-2">
@@ -24,7 +24,9 @@
             <span class="font-bold text-white text-2xl">Total Books: <span id="books" class="font-semibold text-2xl"></span></span>
         </div>
         <main class="h-96 overflow-y-auto bg-slate-400 p-5 rounded shadow-lg">
-            <section id="library" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></section>
+            <section id="library" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <span class="text-slate-900 font-semibold text-2xl">Your library is empty...</span>
+            </section>
         </main>
     </div>
     <div id="book-form" class="hidden w-full p-4 max-w-md md:max-w-lg bg-white rounded shadow-md">
@@ -59,5 +61,6 @@
             <input id="create" class="py-2 px-3 bg-blue-500 text-white text-lg font-bold hover:cursor-pointer rounded w-full mt-3 transition delay-600 duration-500 hover:bg-blue-700" type="submit" value="Create">
         </form>
     </div>
+    <span class="absolute bottom-2 left-2 text-white text-lg">Made with 🪄 by <span class="font-bold">Jorge Alvarado</span></span>
 </body>
 </html>
